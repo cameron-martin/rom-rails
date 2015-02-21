@@ -7,6 +7,8 @@ module ROM
         config = app.config.database_configuration[::Rails.env].
           symbolize_keys.update(root: app.config.root)
 
+        puts config
+
         new(ROM::Config.build(config))
       end
 
