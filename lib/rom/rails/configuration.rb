@@ -3,11 +3,20 @@ module ROM
     class Configuration
       attr_reader :config, :setup, :env
 
+      def self.map_adapter_name(config_hash)
+        mapping = Hash.new { |_, key| key }
+        mapping.merge!({ 'postgresql' => 'postgres' })
+
+        config_hash.dup.tap do |config_hash|
+          config_hash[:adapter] = mapping[config_hash[:adapter]]
+        end
+      end
+
       def self.build(app)
         config = app.config.database_configuration[::Rails.env].
           symbolize_keys.update(root: app.config.root)
 
-        puts config
+        config = map_adapter_name(config)
 
         new(ROM::Config.build(config))
       end
